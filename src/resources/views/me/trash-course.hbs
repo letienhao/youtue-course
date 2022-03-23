@@ -1,12 +1,10 @@
 <div class="mt-4">
     <div class="container">
-        <h3>Danh Sách Khoá Học Của Tôi</h3>
-        <a href="/me/trash/courses">Thùng rác</a>
+        <a href="/me/stored/courses">Quay lại danh sách khóa học</a>
+        <h3>khóa học đã đưa vào thùng rác</h3>
     </div>
-
     <div class="container">
         <table class="table">
-
             <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -23,8 +21,8 @@
                     <td>{{this.level}}</td>
                     <td>{{this.createdAt}}</td>
                     <td>
-                        <a class="btn btn-link" href="/courses/{{this._id}}/edit">
-                            Edit
+                        <a class="btn btn-link btn-restore" href="" data-id="{{this._id}}">
+                            Khôi phục
                         </a>
                         <a class="btn btn-link" data-id="{{this._id}}" href="" data-toggle="modal"
                             data-target="#delete-course">
@@ -34,36 +32,36 @@
                 </tr>
                 {{else}}
                 <tr>
-                    <td colspan="5" class="text-center">Hiện chưa có khóa học nào được thêm.
-                        <a href="/courses/AddNew">Thêm khóa
-                            học</a>
-                    </td>
+                    <td colspan="5" class="text-center">Hiện chưa có khóa học nào trong thùng rác <a
+                            href="/me/stored/courses">
+                            Danh sách khóa học
+                        </a></td>
                 </tr>
-
-
                 {{/each}}
+
             </tbody>
         </table>
     </div>
 </div>
-{{!-- form-delete-course --}}
+{{!-- --}}
 <form method="POST" name="form-delete-course"></form>
-{{!-- confirm delete bst --}}
+<form method="POST" name="form-restore-course"></form>
+{{!-- --}}
 <div id="delete-course" class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Modal title</h5>
+                <h5 class="modal-title">Xóa khóa học</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <p>Modal body text goes here.</p>
+                <p>Bạn có thực sự muốn xóa vĩnh viễn!!!!</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                <button type="button" class="btn btn-danger" id="delete-course-click">delete course</button>
+                <button type="button" class="btn btn-danger" id="delete-course-click">Xóa bỏ</button>
             </div>
         </div>
     </div>
@@ -72,18 +70,25 @@
     document.addEventListener('DOMContentLoaded', function () {
         var couseId;
         var deleteForms = document.forms['form-delete-course'];
+        var restoreForms = document.forms['form-restore-course'];
         var deleteClick = document.getElementById('delete-course-click');
+        var btnRestore = $('.btn-restore');
         $('#delete-course').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget)
             couseId = button.data('id')
-            console.log(couseId)
+
         })
 
         deleteClick.onclick = function () {
-
-            deleteForms.action = '/courses/' + couseId + '?_method=delete';
+            deleteForms.action = '/courses/' + couseId + '?/force_method=delete';
             deleteForms.submit();
         }
+        btnRestore.click(function (e) {   //khi bấm nút restore thì submit form 
+            e.preventDefault();
+            var restoreId = $(this).data('id');
+            restoreForms.action = '/courses/' + restoreId + '/restore?_method=PATCH';
+            restoreForms.submit();
+        })
 
     })
 
