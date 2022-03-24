@@ -18,9 +18,9 @@ class Coursecontrollers {
         res.render('courses/NewCourse')
     }
     // [POST] /course/store
-    async store(req, res, next) {
+    store(req, res, next) {
         req.body.image = `https://i.ytimg.com/vi/${req.body.videoId}/maxresdefault.jpg`;
-        await Course(req.body)
+        Course(req.body)
             .save()
             .then(() => res.redirect('/'))
             .catch(next);

@@ -4,11 +4,23 @@ const course = require("../models/Course");
 class Mecontroller {
     //[get] /me/stored/course
     storedCourse(req, res, next) {
-        course.find({})
-            .then(course => res.render('me/stored-course', {
-                course: multipleMongoosetoOject(course)
-            }))
-            .catch(next)
+
+        Promise.all([course.find({}), course.countDocumentsDeleted()]) //gộp 2 promise với nhau, để truyền đối số deletecount view
+            //
+            .then(([course, deleteCount]) =>
+                res.render('me/stored-course', {
+                    deleteCount,
+                    course: multipleMongoosetoOject(course)
+                }))
+        // course.countDocumentsDeleted()
+        //     .then((deleteCount) => console.log(deleteCount))
+        //     .catch(next);
+        // course.find({})
+        //     .then(course => res.render('me/stored-course', {
+        //         course: multipleMongoosetoOject(course)
+        //     }))
+        //     .catch(next)
+
 
     }
     trashCourse(req, res, next) {
