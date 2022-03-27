@@ -48,18 +48,33 @@ class Coursecontrollers {
             .then(() => res.redirect('back'))
             .catch(next)
     }
-    //[DELETE] /course/:id
+    //[DELETE] /course/:id    //xóa mềm dùng delete
     destroy(req, res, next) {
         Course.delete({ _id: req.params.id })
             .then(() => res.redirect('back'))
             .catch(next)
     }
-    Forcedestroy(req, res, next) {
+    Forcedestroy(req, res, next) { // xóa thật
         Course.deleteOne({ _id: req.params.id })
             .then(() => res.redirect('back'))
             .catch(next)
     }
+    // [post] //coutser/handle-form-action
+    handleformaction(req, res, next) {  //xử lý form
+        // console.log(req.body.action)
+        // console.log({ $in: req.body.courseIds })
 
+        switch (req.body.action) {
+            case "delete":
+                Course.delete({ _id: { $in: req.body.courseIds } })  //sử dụng cú pháp where in tron mongoose %in
+                    .then(() => res.redirect('back'))
+                    .catch(next)
+                break;
+            default:
+                res.json({ message: "action is not select!!!" });
+        }
+
+    }
 
 };
 module.exports = new Coursecontrollers;

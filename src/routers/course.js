@@ -5,6 +5,7 @@ const router = express.Router()
 
 router.get('/Addnew', courseController.Add)
 router.post('/store', courseController.store)
+router.post('/handle-form-action', courseController.handleformaction)
 router.put('/:id', courseController.update);
 router.patch('/:id/restore', courseController.restore);
 router.get('/:id/edit', courseController.edit);

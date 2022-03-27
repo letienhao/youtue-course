@@ -1,34 +1,43 @@
-<form class="mt-4">
+<form class="mt-4" name="container-form" method="post" action="/courses/handle-form-action">
     <div class="container">
         <h3>Danh Sách Khoá Học Của Tôi</h3>
-        <a href="/me/trash/courses"> Thùng rác <i class="glyphicon glyphicon-remove"></i>
+        <a href="/me/trash/courses"> <span class="oi oi-trash"></span>
             ({{deleteCount}})
         </a>
-        <div class="d-flex align-items-center">
-            <div class="form-check ">
-                <input class="form-check-input" type="checkbox" id="checbox-course-AllorNot">
-                <label class="form-check-label" for="checbox-course-AllorNot">
+        <div class="d-flex align-items-center ">
+            <div class="form-check  ">
+                <input class="form-check-input" type="checkbox" id="checbox-course-All">
+                <label class="form-check-label" for="checbox-course-All">
                     Chọn tất cả
                 </label>
             </div>
-            <select class="form-select form-control-sm " aria-label=".form-select-lg example">
-                <option value="" class="selected">-- Lựa chọn --</option>
+            <select class="form-select form-control-sm select-check  " aria-label=".form-select-lg example"
+                name="action" required>
+                <option value="">-- Lựa chọn --</option>
                 <option value="delete">Xóa</option>
             </select>
-            <button class=" btn-primary perform-course-checkbox-btn disabled"> Thực hiện</button>
+            {{!-- <button disabled> Thực hiện</button> --}}
+            <button class="btn btn-primary btn-sm   perform-course-checkbox-btn" disabled="disabled"> Thuc
+                hien</button>
         </div>
-
     </div>
-
     <div class="container">
         <table class="table">
-
             <thead>
                 <tr>
                     <th scope="col" colspan="2">#</th>
-                    <th scope="col">Tên khóa học</th>
-                    <th scope="col">Trình độ</th>
-                    <th scope="col" colspan="2">Thời gian tạo</th>
+                    <th scope="col">
+                        Tên khóa học
+                        {{{sortable 'name' _sort}}}
+                    </th>
+                    <th scope="col">
+                        Trình độ
+                        {{{sortable 'level' _sort}}}
+                    </th>
+                    <th scope="col" colspan="2">
+                        Thời gian tạo
+                        {{{sortable 'createAt' _sort}}}
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -36,7 +45,7 @@
                 <tr>
                     <td>
                         <div class="form-check ">
-                            <input class="form-check-input" type="checkbox" value="{{this._id}}" name="courseIds[]">
+                            <input class="form-check-input" type="checkbox" name='courseIds' value="{{this._id}}">
                         </div>
                     </td>
                     <th scope="row">{{sum @index 1}}</th>
@@ -91,16 +100,16 @@
     document.addEventListener('DOMContentLoaded', function () {
         var couseId;
         var deleteForms = document.forms['form-delete-course'];
+        var formContainer = document.forms['container-form'];
         var deleteClick = document.getElementById('delete-course-click');
-        var checkboxAll = $('#checbox-course-AllorNot');
-        var courseItemsCheckbox = $('input[name="courseIds[]"]');
+        var checkboxAll = $('#checbox-course-All');
+        var courseItemsCheckbox = $('input[name="courseIds"]'); //lấy thuộc tính bằng jquery
         var performCheckboxBtn = $('.perform-course-checkbox-btn');
         $('#delete-course').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget)
             couseId = button.data('id')
             console.log(couseId)
         })
-
         deleteClick.onclick = function () {
             deleteForms.action = '/courses/' + couseId + '?_method=delete';
             deleteForms.submit();
@@ -119,28 +128,26 @@
         })
         //course item checkbox change
         courseItemsCheckbox.change(function () {
-            var isCheckedAll1 = courseItemsCheckbox.length === $('input[name="courseIds[]"]:checked').length
+            var isCheckedAll1 = courseItemsCheckbox.length === $('input[name="courseIds"]:checked').length
             checkboxAll.prop('checked', isCheckedAll1)
             renderCheckAllSubmitBtn()
         })
         //checkall submit button 
-        performCheckboxBtn.click(function (e) {
 
-
-        })
+        /* performCheckboxBtn.on('submit', function (e) {
+                    var isSubmitable = !$(this).hasClass('disabled'); //khi có >0 lựa chọn thì mới có quyền submit
+                    if (!isSubmitable) {
+                        e.preventDefault(); //khi không đủ dk submit thì hủy bỏ hành vi mặt định
+                    }
+                });*/
         function renderCheckAllSubmitBtn() {
-            var checkedCount = $('input[name="courseId[]"]:checked').length;
+            var checkedCount = $('input[name="courseIds"]:checked').length;
             if (checkedCount > 0) {
-                performCheckboxBtn.removeClass('disabled');
+                performCheckboxBtn.attr('disabled', false);
             }
             else {
-                performCheckboxBtn.addClass('disabled')
+                performCheckboxBtn.attr('disabled', true)
             }
         }
-
-
-
-
     })
-
 </script>

@@ -3,7 +3,7 @@ const schema = mongoose.Schema;
 const slug = require('mongoose-slug-generator');
 const mongooseDelete = require('mongoose-delete');
 
-const Course = new schema({
+const Courseschema = new schema({
     name: { type: String, maxlength: 255, required: true },
     description: { type: String, maxlength: 255 },
     image: { type: String, maxlength: 60 },
@@ -16,9 +16,22 @@ const Course = new schema({
     timestamps: true
 })
 mongoose.plugin(slug);
-Course.plugin(mongooseDelete, {
+// custom mdw 
+Courseschema.query.sortable = function (req) {
+    if (req.query.hasOwnProperty('_sort')) {  // hasOwnProperty :kiểm tra xem đối tượng có thuộc tính này hay không
+        const istypes = ['desc', 'asc'].includes(req.query.type);
+        return this.sort({     //hàm sort trong mongoodb 
+            [req.query.column]: istypes ? req.query.type : "desc",
+        })
+    }
+    return this;
+}
+
+
+//
+Courseschema.plugin(mongooseDelete, {
     deletedAt: true,
     overrideMethods: 'all'
 });
 
-module.exports = mongoose.model('Course', Course);
+module.exports = mongoose.model('Course', Courseschema);
