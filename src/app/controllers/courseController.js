@@ -5,11 +5,9 @@ const Course = require("../models/Course");
 class Coursecontrollers {
     //[GET] /course/:slug
     show(req, res, next) {
-        Course.findOne({ slug: req.params.slug }).lean()
-            .then(course => res.render('courses/detail', {
-                course
-            }
-                // { course: mongooseToObject(course) }
+        Course.findOne({ slug: req.params.slug })
+            .then(course => res.render('courses/detail',
+                { course: mongooseToObject(course) }
             ))
             .catch(next)
     }
@@ -19,6 +17,7 @@ class Coursecontrollers {
     }
     // [POST] /course/store
     store(req, res, next) {
+        // const images = req.body.image
         req.body.image = `https://i.ytimg.com/vi/${req.body.videoId}/maxresdefault.jpg`;
         Course(req.body)
             .save()
@@ -28,7 +27,6 @@ class Coursecontrollers {
     //[GET] /course/:id/edit
     edit(req, res, next) {
         Course.findById(req.params.id)
-
             .then(course => res.render('courses/edit', {
                 course: mongooseToObject(course)
             }))
@@ -37,15 +35,10 @@ class Coursecontrollers {
     //[Put] /course/:id
     update(req, res, next) {
         const course = req.body;
+        course.image = `https://i.ytimg.com/vi/${req.body.videoId}/maxresdefault.jpg`;
         // const id = req.params.id
-        Course.findByIdAndUpdate({ _id: req.params.id }, course)
+        Course.updateOne({ _id: req.params.id }, course)
             .then(() => res.redirect('/'))
-            .catch(next)
-    }
-    //[patch] /course/:id/restore
-    restore(req, res, next) {
-        Course.restore({ _id: req.params.id })
-            .then(() => res.redirect('back'))
             .catch(next)
     }
     //[DELETE] /course/:id    //xóa mềm dùng delete
@@ -54,6 +47,13 @@ class Coursecontrollers {
             .then(() => res.redirect('back'))
             .catch(next)
     }
+    //[patch] /course/:id/restore
+    restore(req, res, next) {
+        Course.restore({ _id: req.params.id })
+            .then(() => res.redirect('back'))
+            .catch(next)
+    }
+
     Forcedestroy(req, res, next) { // xóa thật
         Course.deleteOne({ _id: req.params.id })
             .then(() => res.redirect('back'))

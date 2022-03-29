@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extends: true }))
 const morgan = require('morgan'); //quan sát
 const port = 3000;
 
-const db = require('./config/db');
+const db = require('./config/db/index');
 //connect db
 db.connect();
 
@@ -35,7 +35,8 @@ app.engine('hbs', engine({
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, "resources", "views"))
 app.use(express.static(path.join(__dirname, "public")))
-console.log(__dirname)
+
+
 app.use(morgan('combined'));
 //Router
 route(app);

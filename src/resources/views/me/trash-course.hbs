@@ -80,7 +80,7 @@
         })
 
         deleteClick.onclick = function () {
-            deleteForms.action = '/courses/' + couseId + '?/force_method=delete';
+            deleteForms.action = '/courses/' + couseId + '/force?_method=delete';
             deleteForms.submit();
         }
         btnRestore.click(function (e) {   //khi bấm nút restore thì submit form 
